@@ -1,12 +1,13 @@
-Document: draft-sekar-dns-ul-00.txt                          Kiren Sekar
-Internet-Draft                                           Stuart Cheshire
-Expires 7th December 2005                                  Marc Krochmal
-                                                    Apple Computer, Inc.
-                                                           7th June 2005
+Document: draft-sekar-dns-ul-01.txt                      Stuart Cheshire
+Internet-Draft                                             Marc Krochmal
+Category: Standards Track                           Apple Computer, Inc.
+Expires 10th February 2007                                   Kiren Sekar
+                                                         Sharpcast, Inc.
+                                                        10th August 2006
 
                        Dynamic DNS Update Leases
 
-                      <draft-sekar-dns-ul-00.txt>
+                      <draft-sekar-dns-ul-01.txt>
 
 Status of this Memo
 
@@ -29,10 +30,10 @@ Status of this Memo
    material or to cite them other than as "work in progress."
 
    The list of current Internet-Drafts can be accessed at
-   http://www.ietf.org/ietf/1id-abstracts.txt.
+   http://www.ietf.org/1id-abstracts.html
 
    The list of Internet-Draft Shadow Directories can be accessed at
-   http://www.ietf.org/shadow.html.
+   http://www.ietf.org/shadow.html
 
 
 Abstract
@@ -54,38 +55,38 @@ Abstract
 
 
 
-
-Expires 7th December 2005        Sekar, et al.                  [Page 1]
+Expires 10th February 2007       Sekar, et al.                  [Page 1]
 
-Internet Draft           Dynamic DNS Update Leases         7th June 2005
+Internet Draft           Dynamic DNS Update Leases      10th August 2006
 
 
 1. Introduction
 
    Dynamic DNS Update [RFC 2136] allows for a mapping from a persistent
-   hostname to a dynamic IP address.  This capability is particularly
+   hostname to a dynamic IP address. This capability is particularly
    beneficial to mobile hosts, whose IP address may frequently change
-   with location.  However, the mobile nature of such hosts often means
+   with location. However, the mobile nature of such hosts often means
    that dynamically updated resource records are often not properly
-   deleted.  Consider, for instance, a mobile user who publishes address
-   records via dynamic update.  If this user unplugs the Ethernet cable
+   deleted. Consider, for instance, a mobile user who publishes address
+   records via dynamic update. If this user unplugs the Ethernet cable
    from their laptop, the address record containing stale information
    will remain on the server indefinitely.  "DNS Scavenging" attempts to
    address this issue by configuring clients and servers with a preset
    refresh interval, however, this approach does not extend to
    zero-configuration environments in which the client and server are
-   not under the same administration.  An extension to Dynamic Update is
+   not under the same administration. An extension to Dynamic Update is
    thus required to tell the server to automatically delete resource
    records if they are not refreshed after a period of time.
 
    Note that overloading the resource record TTL [RFC 1035] is not
-   appropriate for purposes of garbage collection.  Data that is
+   appropriate for purposes of garbage collection. Data that is
    susceptible to frequent change or invalidation, thus requiring a
    garbage collection mechanism, needs a relatively short resource
    record TTL to avoid polluting intermediate DNS caches with stale
-   data.  Using this TTL, short enough to minimize stale cached data, as
-   a garbage collection lease life would result in an unacceptable
-   amount of network traffic due to refreshes (see section 6).
+   data. Using this TTL, short enough to minimize stale cached data,
+   as a garbage collection lease life would result in an unacceptable
+   amount of network traffic due to refreshes (see section 6 "Refresh
+   Messages").
 
 
 2. Conventions and Terminology Used in this Document
@@ -106,23 +107,22 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
    that do not implement this extension to automatically return a
    descriptive error (NOTIMPL).
 
-
 4. New Assigned Numbers
 
    EDNS0 OPTION CODE:
            UPDATE-LEASE 2
 
 
-Expires 7th December 2005        Sekar, et al.                  [Page 2]
+Expires 10th February 2007       Sekar, et al.                  [Page 2]
 
-Internet Draft           Dynamic DNS Update Leases         7th June 2005
+Internet Draft           Dynamic DNS Update Leases      10th August 2006
 
 
 5. Update Message Format
 
    Dynamic DNS Update Leases Requests and Responses are formatted as per
    [RFC 2136], with the addition of a single OPT-RR as the last record
-   in the Additionals section.  Note that if a TSIG resource record is
+   in the Additional section. Note that if a TSIG resource record is
    to be added to authenticate the update [RFC 2845], the OPT-RR should
    occur BEFORE the TSIG RR, allowing the message digest in the TSIG to
    contain the OPT-RR.
@@ -150,20 +150,20 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
 
    Update Requests contain, in the LEASE field of the OPT RDATA, a
    signed 32-bit integer indicating the lease life, in seconds, desired
-   by the client.  In Update Responses, this field contains the actual
-   lease granted by the server.  Note that the lease granted by the
+   by the client. In Update Responses, this field contains the actual
+   lease granted by the server. Note that the lease granted by the
    server may be less than, greater than, or equal to the value
-   requested by the client.  To reduce network and server load, a
-   minimum lease of 30 minutes (1800 seconds) is RECOMMENDED.  Note that
+   requested by the client. To reduce network and server load, a
+   minimum lease of 30 minutes (1800 seconds) is RECOMMENDED. Note that
    leases are expected to be sufficiently long as to make timer
    discrepancies  (due to transmission latency, etc.) between a client
-   and server negligible.  Clients that expect the updated records to be
-   relatively static MAY request appropriately longer leases.  Servers
+   and server negligible. Clients that expect the updated records to be
+   relatively static MAY request appropriately longer leases. Servers
    MAY grant relatively longer or shorter leases to reduce network
    traffic due to refreshes, or reduce stale data, respectively.
 
    The Update Lease indicated in the OPT-RR applies to all resource
-   records in the Updates section.
+   records in the Update section.
 
 
 
@@ -171,18 +171,18 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
 
 
 
-Expires 7th December 2005        Sekar, et al.                  [Page 3]
+Expires 10th February 2007       Sekar, et al.                  [Page 3]
 
-Internet Draft           Dynamic DNS Update Leases         7th June 2005
+Internet Draft           Dynamic DNS Update Leases      10th August 2006
 
 
 6. Refresh Messages
 
    Resource records not to be deleted by the server MUST be refreshed by
-   the client before the lease elapses.  Clients SHOULD refresh resource
-   records after 75% of the original lease has elapsed.  If the client
+   the client before the lease elapses. Clients SHOULD refresh resource
+   records after 75% of the original lease has elapsed. If the client
    uses UDP and does not receive a response from the server, the client
-   SHOULD re-try after 2 seconds.  The client SHOULD continue to re-try,
+   SHOULD re-try after 2 seconds. The client SHOULD continue to re-try,
    doubling the length of time between each re-try, or re-try using TCP.
 
 
@@ -190,12 +190,12 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
 
    If the client has sent multiple updates to a single server, the
    client MAY include refreshes for all valid updates to that server in
-   a single message.  This effectively places all records for a client
+   a single message. This effectively places all records for a client
    on the same expiration schedule, reducing network traffic due to
-   refreshes.  In doing so, the client includes in the refresh message
+   refreshes. In doing so, the client includes in the refresh message
    all existing updates to the server, including those not yet close to
    expiration, so long as at least one resource record in the message
-   has elapsed at least 75% of its original lease.  If the client uses
+   has elapsed at least 75% of its original lease. If the client uses
    UDP, the client MUST NOT coalesce refresh messages if doing so would
    cause truncation of the message; in this case, multiple messages or
    TCP should be used.
@@ -204,45 +204,46 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
 6.2 Refresh Message Format
 
    Refresh messages are formatted like Dynamic Update Leases Requests
-   and Responses (see section 5).  The resource records to be refreshed
-   are contained in the Update section.  These same resource records are
-   repeated in the Prerequisites section, as an "RRSet exists (value
-   dependent)" prerequisite as per [RFC 2136] section 2.4.  An OPT-RR is
-   the last resource record in the Additionals section (except for a
-   TSIG record, which, if required, follows the OPT-RR).  The OPT-RR
-   contains the desired new lease on Requests, and the actual granted
-   lease on Responses. The Update Lease indicated in the OPT-RR applies
-   to all resource records in the Updates section.
+   and Responses (see Section 5 "Update Message Format"). The resource
+   records to be refreshed are contained in the Update section. These
+   same resource records are repeated in the Prerequisite section, as
+   an "RRSet exists (value dependent)" prerequisite as per [RFC 2136]
+   section 2.4.  An OPT-RR is the last resource record in the Additional
+   section (except for a TSIG record, which, if required, follows the
+   OPT-RR). The OPT-RR contains the desired new lease on Requests, and
+   the actual granted lease on Responses. The Update Lease indicated in
+   the OPT-RR applies to all resource records in the Update section.
 
 
 6.3 Server Behavior
 
    Upon receiving a valid Refresh Request, the server MUST send an
-   acknowledgment.  This acknowledgment is identical to the Update
-   Response format described in section 5, and contains the new lease of
-   the resource records being refreshed.  If no records in the Refresh
-   Request have completed 75% of their leases, the server SHOULD NOT
-   refresh the updates; the response should contain the smallest
-   remaining (unrefreshed) lease of all records in the refresh message.
-   The server MUST NOT increment the SOA serial number of a zone as the
-   result of a refresh.
+   acknowledgment. This acknowledgment is identical to the Update
+   Response format described in section 5 "Update Message Format",
+   and contains the new lease of the resource records being refreshed.
+   If no records in the Refresh Request have completed 75% of their
+   leases, the server SHOULD NOT refresh the updates; the response
+   should contain the smallest remaining (unrefreshed) lease of all
+   records in the refresh message. The server MUST NOT increment the
+   SOA serial number of a zone as the result of a refresh.
 
 
 
-Expires 7th December 2005        Sekar, et al.                  [Page 4]
+Expires 10th February 2007       Sekar, et al.                  [Page 4]
 
-Internet Draft           Dynamic DNS Update Leases         7th June 2005
+Internet Draft           Dynamic DNS Update Leases      10th August 2006
 
 
 7. Garbage Collection
 
    If the Update Lease of a resource record elapses without being
    refreshed, the server MUST NOT return the expired record in answers
-   to queries.  The server MAY delete the record from its database.
+   to queries. The server MAY delete the record from its database.
+
 
 8. Copyright Notice
 
-   Copyright (C) The Internet Society (2005).
+   Copyright (C) The Internet Society (2006).
 
    This document is subject to the rights, licenses and restrictions
    contained in BCP 78, and except as set forth therein, the authors
@@ -258,16 +259,20 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
    THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
    WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 
+
 9. IANA Considerations
 
-   No IANA services are required by this document.
+   The EDNS0 OPTION CODE 2 has already been assigned for this DNS
+   extension. No additional IANA services are required by this document.
+
 
 10. Acknowledgments
 
    The concepts described in this document have been explored, developed
    and implemented with help from Roger Pantos and Chris Sharp.
 
-11. References
+
+11. Normative References
 
    [RFC 1035] Mockapetris, P., "Domain Names - Implementation and
               Specifications", STD 13, RFC 1035, November 1987.
@@ -281,29 +286,22 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
    [RFC 2671] Vixie, P., "Extension Mechanisms for DNS (EDNS0)",
               RFC 2671, August 1999.
 
+
+Expires 10th February 2007       Sekar, et al.                  [Page 5]
+
+Internet Draft           Dynamic DNS Update Leases      10th August 2006
+
+
+12. Informative References
+
    [RFC 2845] Vixie, P., et al., "Secret Key Transaction Authentication
               for DNS (TSIG)", RFC 2845, May 2000.
 
 
 
 
-Expires 7th December 2005        Sekar, et al.                  [Page 5]
-
-Internet Draft           Dynamic DNS Update Leases         7th June 2005
 
-
-12. Authors' Addresses
-
-   Kiren Sekar
-   Apple Computer, Inc.
-   1 Infinite Loop
-   Cupertino
-   California 95014
-   USA
-
-   Phone: +1 408 974 8051
-   EMail: kiren [at] apple [dot] com
-
+13. Authors' Addresses
 
    Stuart Cheshire
    Apple Computer, Inc.
@@ -327,6 +325,15 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
    EMail: marc [at] apple [dot] com
 
 
+   Kiren Sekar
+   Sharpcast, Inc.
+   250 Cambridge Ave, Suite 101
+   Palo Alto
+   California 94306
+   USA
+
+   Phone: +1 650 323 1960
+   EMail: ksekar [at] sharpcast [dot] com
 
 
 
@@ -338,11 +345,4 @@ Internet Draft           Dynamic DNS Update Leases         7th June 2005
 
 
 
-
-
-
-
-
-
-
-Expires 7th December 2005        Sekar, et al.                  [Page 6]
+Expires 10th February 2007       Sekar, et al.                  [Page 6]
