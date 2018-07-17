@@ -127,7 +127,7 @@ Check output with <http://tools.ietf.org/tools/idnits/>
     <section title="Mechanisms">
       <t>Dynamic DNS Update Leases is implemented using the standard Dynamic
       Update message format <xref target="RFC2136"/> in conjunction with an EDNS(0) OPT
-      pseudo-RR <xref target="RFC2671"/> with a new OPT and RDATA format proposed here. 
+      pseudo-RR <xref target="RFC6891"/> with a new OPT and RDATA format proposed here.
       Encoding the Update Lease Lifetime in an OPT RR requires minimal
       modification to a name server's front-end, and will cause servers
       that do not implement this extension to automatically return a
@@ -164,8 +164,8 @@ OPTION-CODE      u_int16_t    UPDATE-LEASE (2)
 OPTION-LENGTH    u_int16_t    4 or 8
 LEASE            u_int32_t    desired lease (request) or
                               granted lease (response), in seconds
-KEY-LEASE        u_int32_t    optional desired (or granted) lease
-                              
+KEY-LEASE        u_int32_t    optional desired (or granted)
+                              lease for KEY records, in seconds
 ]]></artwork></figure>
 
       <t>Update Requests contain, in the LEASE field of the OPT RDATA, an
@@ -197,7 +197,8 @@ KEY-LEASE        u_int32_t    optional desired (or granted) lease
       This variant is used specifically for supporting the DNS-SD
       Service Registration Protocol <xref target="I-D.sctl-service-registration"/>.
       </t>
-   
+
+<?rfc needLines="45" ?>
     </section>
 
     <section title="Refresh Messages" anchor="refresh">
@@ -254,6 +255,15 @@ KEY-LEASE        u_int32_t    optional desired (or granted) lease
       to queries. The server MAY delete the record from its database.</t>
     </section>
 
+    <section title="Security Considerations">
+      <t>When Dynamic DNS Update is enabled on an authoritative server,
+      the Security Considerations of that specification <xref target="RFC2136"/>
+      should be considered.</t>
+
+      <t>The addition of a record lifetime to facilitate automated garbage collection
+      does not itself add any significant new security concerns.</t>
+    </section>
+
     <section title="IANA Considerations">
       <t>The EDNS(0) OPTION CODE 2 has already been assigned for this DNS
       extension. No additional IANA services are required by this document.</t>
@@ -262,24 +272,26 @@ KEY-LEASE        u_int32_t    optional desired (or granted) lease
     <section title="Acknowledgments">
       <t>Thanks to Marc Krochmal and Kiren Sekar to their work in 2006 on the precursor to this document.
       Thanks also to Roger Pantos and Chris Sharp for their contributions.</t>
+<?rfc needLines="45" ?>
     </section>
   </middle>
 
   <back>
+<!-- This needLines directive is to keep the Authors' Addresses heading from being split from the list -->
+<?rfc needLines="19" ?>
     <!-- <displayreference target="I-D.sctl-service-registration" to="RegProt"/> -->
     <!-- <displayreference target="I-D.ietf-dnssd-hybrid" to="I-D.ietf-dnssd-hybrid"/> appears to not work in xml2rfc 2.6.2 -->
     <references title="Normative References">
       <?rfc include="reference.RFC.1035" ?>
       <?rfc include="reference.RFC.2119" ?>
       <?rfc include="reference.RFC.2136" ?>
-      <?rfc include="reference.RFC.2671" ?>
+      <?rfc include="reference.RFC.6891" ?>
       <?rfc include="reference.RFC.8174" ?>
     </references>
 
     <references title="Informative References">
       <?rfc include="reference.RFC.2845" ?>
       <?rfc include="reference.I-D.sctl-service-registration" ?>
-
-</references>
+    </references>
   </back>
 </rfc>

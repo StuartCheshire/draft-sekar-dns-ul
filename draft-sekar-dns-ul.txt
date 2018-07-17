@@ -96,7 +96,7 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
 
    Dynamic DNS Update Leases is implemented using the standard Dynamic
    Update message format [RFC2136] in conjunction with an EDNS(0) OPT
-   pseudo-RR [RFC2671] with a new OPT and RDATA format proposed here.
+   pseudo-RR [RFC6891] with a new OPT and RDATA format proposed here.
    Encoding the Update Lease Lifetime in an OPT RR requires minimal
    modification to a name server's front-end, and will cause servers
    that do not implement this extension to automatically return a
@@ -142,8 +142,8 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
     OPTION-LENGTH    u_int16_t    4 or 8
     LEASE            u_int32_t    desired lease (request) or
                                   granted lease (response), in seconds
-    KEY-LEASE        u_int32_t    optional desired (or granted) lease
-
+    KEY-LEASE        u_int32_t    optional desired (or granted)
+                                  lease for KEY records, in seconds
 
    Update Requests contain, in the LEASE field of the OPT RDATA, an
    unsigned 32-bit integer indicating the lease lifetime, in seconds,
@@ -179,6 +179,52 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
    KEY-LEASE indicated in the OPT RR applies to KEY records in the
    Update section.  This variant is used specifically for supporting the
    DNS-SD Service Registration Protocol [I-D.sctl-service-registration].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires January 16, 2019                [Page 4]
+
+Internet-Draft          Dynamic DNS Update Leases              July 2018
+
 
 5.  Refresh Messages
 
@@ -216,16 +262,6 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
    lease on Responses.  The Update Lease indicated in the OPT RR applies
    to all resource records in the Update section.
 
-
-
-
-
-
-Cheshire & Lemon        Expires January 16, 2019                [Page 4]
-
-Internet-Draft          Dynamic DNS Update Leases              July 2018
-
-
 5.3.  Server Behavior
 
    Upon receiving a valid Refresh Request, the server MUST send an
@@ -238,27 +274,73 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
    the refresh message.  The server MUST NOT increment the SOA serial
    number of a zone as the result of a refresh.
 
+
+
+
+Cheshire & Lemon        Expires January 16, 2019                [Page 5]
+
+Internet-Draft          Dynamic DNS Update Leases              July 2018
+
+
 6.  Garbage Collection
 
    If the Update Lease of a resource record elapses without being
    refreshed, the server MUST NOT return the expired record in answers
    to queries.  The server MAY delete the record from its database.
 
-7.  IANA Considerations
+7.  Security Considerations
+
+   When Dynamic DNS Update is enabled on an authoritative server, the
+   Security Considerations of that specification [RFC2136] should be
+   considered.
+
+   The addition of a record lifetime to facilitate automated garbage
+   collection does not itself add any significant new security concerns.
+
+8.  IANA Considerations
 
    The EDNS(0) OPTION CODE 2 has already been assigned for this DNS
    extension.  No additional IANA services are required by this
    document.
 
-8.  Acknowledgments
+9.  Acknowledgments
 
    Thanks to Marc Krochmal and Kiren Sekar to their work in 2006 on the
    precursor to this document.  Thanks also to Roger Pantos and Chris
    Sharp for their contributions.
 
-9.  References
 
-9.1.  Normative References
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires January 16, 2019                [Page 6]
+
+Internet-Draft          Dynamic DNS Update Leases              July 2018
+
+
+10.  References
+
+10.1.  Normative References
 
    [RFC1035]  Mockapetris, P., "Domain names - implementation and
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
@@ -274,23 +356,16 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
               RFC 2136, DOI 10.17487/RFC2136, April 1997,
               <https://www.rfc-editor.org/info/rfc2136>.
 
-
-
-
-Cheshire & Lemon        Expires January 16, 2019                [Page 5]
-
-Internet-Draft          Dynamic DNS Update Leases              July 2018
-
-
-   [RFC2671]  Vixie, P., "Extension Mechanisms for DNS (EDNS0)",
-              RFC 2671, DOI 10.17487/RFC2671, August 1999,
-              <https://www.rfc-editor.org/info/rfc2671>.
+   [RFC6891]  Damas, J., Graff, M., and P. Vixie, "Extension Mechanisms
+              for DNS (EDNS(0))", STD 75, RFC 6891,
+              DOI 10.17487/RFC6891, April 2013,
+              <https://www.rfc-editor.org/info/rfc6891>.
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-9.2.  Informative References
+10.2.  Informative References
 
    [RFC2845]  Vixie, P., Gudmundsson, O., Eastlake 3rd, D., and B.
               Wellington, "Secret Key Transaction Authentication for DNS
@@ -300,7 +375,24 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
    [I-D.sctl-service-registration]
               Cheshire, S. and T. Lemon, "Service Registration Protocol
               for DNS-Based Service Discovery", draft-sctl-service-
-              registration-01 (work in progress), July 2018.
+              registration-02 (work in progress), July 2018.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires January 16, 2019                [Page 7]
+
+Internet-Draft          Dynamic DNS Update Leases              July 2018
+
 
 Authors' Addresses
 
@@ -333,4 +425,24 @@ Authors' Addresses
 
 
 
-Cheshire & Lemon        Expires January 16, 2019                [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cheshire & Lemon        Expires January 16, 2019                [Page 8]
