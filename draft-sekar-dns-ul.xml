@@ -94,7 +94,7 @@ Check output with <http://tools.ietf.org/tools/idnits/>
       hostname to a dynamic IP address. This capability is particularly
       beneficial to mobile hosts, whose IP address may frequently change
       with location. However, the mobile nature of such hosts often means
-      that dynamically updated resource records are often not properly
+      that dynamically updated resource records are not properly
       deleted. Consider, for instance, a mobile user who publishes address
       records via dynamic update. If this user moves
       their laptop out of range of the Wi-Fi access point,

@@ -64,10 +64,10 @@ Internet-Draft          Dynamic DNS Update Leases              July 2018
    hostname to a dynamic IP address.  This capability is particularly
    beneficial to mobile hosts, whose IP address may frequently change
    with location.  However, the mobile nature of such hosts often means
-   that dynamically updated resource records are often not properly
-   deleted.  Consider, for instance, a mobile user who publishes address
-   records via dynamic update.  If this user moves their laptop out of
-   range of the Wi-Fi access point, the address record containing stale
+   that dynamically updated resource records are not properly deleted.
+   Consider, for instance, a mobile user who publishes address records
+   via dynamic update.  If this user moves their laptop out of range of
+   the Wi-Fi access point, the address record containing stale
    information may remain on the server indefinitely.  An extension to
    Dynamic Update is thus required to tell the server to automatically
    delete resource records if they are not refreshed after a period of
