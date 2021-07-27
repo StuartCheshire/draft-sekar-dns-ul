@@ -1,48 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
-
-<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
-
-<!--
-Check output with <http://tools.ietf.org/tools/idnits/>
--->
-
-<!-- used by XSLT processors -->
-<!-- For a complete list and description of processing instructions (PIs),
-     please see http://xml.resource.org/authoring/README.html. -->
-<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
-     (Here they are set differently than their defaults in xml2rfc v1.35) -->
-
-<!-- give errors regarding ID-nits and DTD validation -->
-<?rfc strict="yes" ?>
-
-<!-- control the table of contents (ToC) -->
-<!-- generate a ToC -->
-<?rfc toc="no"?>
-<!-- the number of levels of subsections in ToC. default: 3 -->
-<?rfc tocdepth="3"?>
-
-<!-- control references -->
-<!-- use anchors instead of numbers for refs, i.e, [RFC2119] instead of [1] -->
-<?rfc symrefs="yes"?>
-<!-- sort the reference entries alphabetically -->
-<?rfc sortrefs="no" ?>
-
-<!-- control vertical white space
-     (using these PIs as follows is recommended by the RFC Editor) -->
-<!-- do not start each main section on a new page -->
-<?rfc compact="yes" ?>
-<!-- keep one blank line between list items -->
-<?rfc subcompact="no" ?>
-
-<!-- encourage use of "xml2rfc" tool -->
-<?rfc rfcprocack="yes" ?>
-<!-- end of list of popular I-D processing instructions -->
-
-<rfc category="std" docName="draft-sekar-dns-ul-02" ipr="trust200902">
-
+<!DOCTYPE rfc SYSTEM "rfc2629-xhtml.ent">
+<rfc category="std" submissionType="IETF" docName="draft-sekar-dns-ul-03" ipr="trust200902"
+     xmlns:xi="http://www.w3.org/2001/XInclude" version="3"
+     scripts="Common,Latin" sortRefs="false"
+     symRefs="true" tocDepth="3" tocInclude="true" xml:lang="en">
   <front>
-    <title abbrev='Dynamic DNS Update Leases'>Dynamic DNS Update Leases</title>
+    <title abbrev='Dynamic DNS Update Leases'>
+      An EDNS0 option to negotiate Leases on DNS Updates
+    </title>
+
     <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'>
       <organization>Apple Inc.</organization>
       <address>
@@ -59,7 +25,7 @@ Check output with <http://tools.ietf.org/tools/idnits/>
     </author>
 
     <author initials="T" surname="Lemon" fullname="Ted Lemon">
-      <organization>Nibbhaya Consulting</organization>
+      <organization>Apple Inc</organization>
       <address>
         <postal>
           <street>P.O. Box 958</street>
@@ -72,7 +38,7 @@ Check output with <http://tools.ietf.org/tools/idnits/>
       </address>
     </author>
 
-    <date year='2018' month='July' day='15'/>
+    <date year='2021' month='July' day='27'/>
     <area>Internet</area>
     <workgroup>Internet Engineering Task Force</workgroup>
     <keyword>DNS Update</keyword>
@@ -81,15 +47,16 @@ Check output with <http://tools.ietf.org/tools/idnits/>
     <keyword>I-D</keyword>
     <keyword>Internet-Draft</keyword>
     <abstract>
-      <t>This document proposes a method of extending Dynamic DNS Update to
-      contain an update lease lifetime, allowing a server to garbage collect stale
-      resource records.</t>
+      <t>This document proposes a new EDNS0 option that can be used by DNS Update clients and
+      DNS servers to include a lease lifetime in a DNS Update or response, allowing a server to garbage collect stale
+      resource records that have been added by DNS Updates</t>
     </abstract>
   </front>
 
   <middle>
 
-    <section title="Introduction">
+    <section>
+      <name>Introduction</name>
       <t>Dynamic DNS Update <xref target="RFC2136"/> allows for a mapping from a persistent
       hostname to a dynamic IP address. This capability is particularly
       beneficial to mobile hosts, whose IP address may frequently change
@@ -115,18 +82,20 @@ Check output with <http://tools.ietf.org/tools/idnits/>
       (see <xref target="refresh"/> "Refresh Messages").</t>
     </section>
 
-    <section title="Conventions and Terminology Used in this Document">
+    <section>
+      <name>Conventions and Terminology Used in this Document</name>
       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-      "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",<vspace />
-      and "OPTIONAL" in this document are to be interpreted as described<vspace />
-      in "Key words for use in RFCs to Indicate Requirement Levels",<vspace />
-      when, and only when, they appear in all capitals, as shown here<vspace />
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+      and "OPTIONAL" in this document are to be interpreted as described
+      in "Key words for use in RFCs to Indicate Requirement Levels",
+      when, and only when, they appear in all capitals, as shown here
       <xref target="RFC2119"/> <xref target="RFC8174"/>.</t>
     </section>
 
-    <section title="Mechanisms">
-      <t>Dynamic DNS Update Leases is implemented using the standard Dynamic
-      Update message format <xref target="RFC2136"/> in conjunction with an EDNS(0) OPT
+    <section>
+      <name>Mechanisms</name>
+      <t>The EDNS0 Update Lease option is included in a standard DNS
+      Update message <xref target="RFC2136"/> within an EDNS(0) OPT
       pseudo-RR <xref target="RFC6891"/> with a new OPT and RDATA format proposed here.
       Encoding the Update Lease Lifetime in an OPT RR requires minimal
       modification to a name server's front-end, and will cause servers
@@ -134,7 +103,8 @@ Check output with <http://tools.ietf.org/tools/idnits/>
       descriptive error (NOTIMPL).</t>
     </section>
 
-    <section title="Update Message Format" anchor="update">
+    <section anchor="update">
+      <name>Update Message Format</name>
       <t>
       Dynamic DNS Update Leases Requests and Responses are formatted as standard DNS Dynamic Update messages
       <xref target="RFC2136"/>, with the addition of a single OPT RR
@@ -195,13 +165,12 @@ KEY-LEASE        u_int32_t    optional desired (or granted)
       The KEY-LEASE indicated in the
       OPT RR applies to KEY records in the Update section.
       This variant is used specifically for supporting the DNS-SD
-      Service Registration Protocol <xref target="I-D.sctl-service-registration"/>.
+      Service Registration Protocol <xref target="I-D.ietf-dnssd-srp"/>.
       </t>
-
-<?rfc needLines="45" ?>
     </section>
 
-    <section title="Refresh Messages" anchor="refresh">
+    <section anchor="refresh">
+      <name>Refresh Messages</name>
       <t>Resource records not to be deleted by the server MUST be refreshed by
       the client before the lease elapses. Clients SHOULD refresh resource
       records after 75% of the original lease has elapsed. If the client
@@ -209,7 +178,8 @@ KEY-LEASE        u_int32_t    optional desired (or granted)
       SHOULD re-try after 2 seconds. The client SHOULD continue to re-try,
       doubling the length of time between each re-try, or re-try using TCP.</t>
 
-      <section title="Coalescing Refresh Messages">
+      <section>
+	<name>Coalescing Refresh Messages</name>
         <t>If the client has sent multiple updates to a single server, the
         client MAY include refreshes for all valid updates to that server in
         a single message. This effectively places all records for a client
@@ -223,7 +193,8 @@ KEY-LEASE        u_int32_t    optional desired (or granted)
         TCP should be used.</t>
       </section>
 
-      <section title="Refresh Message Format">
+      <section>
+	<name>Refresh Message Format</name>
         <t>Refresh messages are formatted like Dynamic Update Leases Requests
         and Responses (see <xref target="update"/> "Update Message Format"). The resource
         records to be refreshed are contained in the Update section. These
@@ -236,7 +207,8 @@ KEY-LEASE        u_int32_t    optional desired (or granted)
         the OPT RR applies to all resource records in the Update section.</t>
       </section>
 
-      <section title="Server Behavior">
+      <section>
+	<name>Server Behavior</name>
         <t>Upon receiving a valid Refresh Request, the server MUST send an
         acknowledgment. This acknowledgment is identical to the Update
         Response format described in <xref target="update"/> "Update Message Format",
@@ -249,14 +221,15 @@ KEY-LEASE        u_int32_t    optional desired (or granted)
       </section>
     </section>
 
-    <section title="Garbage Collection">
+    <section>
+      <name>Garbage Collection</name>
       <t>If the Update Lease of a resource record elapses without being
       refreshed, the server MUST NOT return the expired record in answers
       to queries. The server MAY delete the record from its database.</t>
     </section>
 
     <section title="Security Considerations">
-      <t>When Dynamic DNS Update is enabled on an authoritative server,
+      <t>When DNS Update is enabled on an authoritative server,
       the Security Considerations of that specification <xref target="RFC2136"/>
       should be considered.</t>
 
@@ -264,34 +237,34 @@ KEY-LEASE        u_int32_t    optional desired (or granted)
       does not itself add any significant new security concerns.</t>
     </section>
 
-    <section title="IANA Considerations">
+    <section>
+      <name>IANA Considerations</name>
       <t>The EDNS(0) OPTION CODE 2 has already been assigned for this DNS
       extension. No additional IANA services are required by this document.</t>
     </section>
 
-    <section title="Acknowledgments">
+    <section>
+      <name>Acknowledgments</name>
       <t>Thanks to Marc Krochmal and Kiren Sekar to their work in 2006 on the precursor to this document.
       Thanks also to Roger Pantos and Chris Sharp for their contributions.</t>
-<?rfc needLines="45" ?>
     </section>
   </middle>
 
   <back>
 <!-- This needLines directive is to keep the Authors' Addresses heading from being split from the list -->
-<?rfc needLines="19" ?>
     <!-- <displayreference target="I-D.sctl-service-registration" to="RegProt"/> -->
     <!-- <displayreference target="I-D.ietf-dnssd-hybrid" to="I-D.ietf-dnssd-hybrid"/> appears to not work in xml2rfc 2.6.2 -->
     <references title="Normative References">
-      <?rfc include="reference.RFC.1035" ?>
-      <?rfc include="reference.RFC.2119" ?>
-      <?rfc include="reference.RFC.2136" ?>
-      <?rfc include="reference.RFC.6891" ?>
-      <?rfc include="reference.RFC.8174" ?>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.1035.xml"/>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2136.xml"/>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6891.xml"/>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
     </references>
 
     <references title="Informative References">
-      <?rfc include="reference.RFC.2845" ?>
-      <?rfc include="reference.I-D.sctl-service-registration" ?>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2845.xml"/>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-dnssd-srp.xml"/>
     </references>
   </back>
 </rfc>
